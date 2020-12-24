@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Snake</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href = "styles.css">
+</head>
+<body>
+<h1>Snake</h1>
+<div id="main" class="main">
+    <div id="snake" class="snake"></div>
+</div>
+<button onclick="move()">Start</button>
+<script>
+    var newMove = false;
+    var gridElement = document.getElementById("snake");
+    gridElement.style.top = "200px";
+    gridElement.style.left = "250px";
+
+    // Key listener for keypad
+    document.addEventListener('keydown', event => {
+        var key = event.key.toLowerCase();
+        move(key);
+    });
+
+    // main motion function
+    // right and bottom works by subtracting from left and top (respectively)
+    function move(direction) {
+        newMove = true;
+        newMove = false;
+        var elem = document.getElementById("snake");   
+        var startPos = 0;
+        var pos = 0;
+        var stringPos;
+
+        // access the position value and convert it to an integer
+        if (direction === "arrowup" || direction === "arrowdown") {
+            stringPos = elem.style.top;
+            console.log(stringPos);
+        } else if (direction === "arrowleft" || direction === "arrowright") {
+            stringPos = elem.style.left;
+            console.log(stringPos);
+        }
+        startPos = parseInt(stringPos.substring(0, stringPos.indexOf("px")));
+        // console.log(startPos);
+        var id = setInterval(frame, 10);
+
+        function frame() {
+            // Check if reached border
+            if (((direction === "arrowup" || direction === "arrowdown") && pos + startPos == 400)
+                || ((direction === "arrowleft" || direction === "arrowright") && pos + startPos == 500)) {
+                clearInterval(id);
+            } else {
+                pos++; 
+                switch (direction) {
+                    case "arrowup":
+                        elem.style.top = startPos - pos + 'px';
+                        break;
+                    case "arrowleft":
+                        elem.style.left = startPos - pos + 'px'; 
+                        break;
+                    case "arrowright":
+                        elem.style.left = startPos + pos + 'px'; 
+                        break;
+                    case "arrowdown":
+                        elem.style.top = startPos + pos + 'px'; 
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+    }
+</script>
+</body>
+</html>
