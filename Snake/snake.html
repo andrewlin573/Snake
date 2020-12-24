@@ -13,16 +13,21 @@
 </div>
 <button onclick="move()">Start</button>
 <script>
+
+    let snake = [{x: "300px", y: "300px"} ]
+
+
     var newMove = false;
     var gridElement = document.getElementById("snake");
-    gridElement.style.top = "200px";
-    gridElement.style.left = "250px";
+    gridElement.style.top = "300px";
+    gridElement.style.left = "300px";
 
     // Key listener for keypad
     document.addEventListener('keydown', event => {
         var key = event.key.toLowerCase();
         move(key);
     });
+    
 
     // main motion function
     // right and bottom works by subtracting from left and top (respectively)
