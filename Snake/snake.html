@@ -16,7 +16,7 @@
     <div id="snake1" class="snake"></div>
     <div id="snake2" class="snake"></div>
 </div>
-<button onclick="go()">Start!</button>
+<button onclick="start()">Start!</button>
 <button onclick="pause()">Pause!</button>
 <script>
 
@@ -41,7 +41,7 @@ document.getElementById("snake0").style.visibility = "visible";
 document.getElementById("snake1").style.visibility = "visible";
 document.getElementById("snake2").style.visibility = "visible";
 
-spawnTrophy();
+//spawnTrophy();
 
 function drawSnake() {
     for (i = 0; i < snake.length; i++) {
@@ -78,11 +78,41 @@ function moveSnake() {
         snake[0].x = (parseInt(snake[0].x) - 20).toString();
     }
 
+    if (checkSnakeCrash()) {
+        gameOver();
+    }
+
     if (parseInt(snake[0].x) == this.trophyX && parseInt(snake[0].y) == this.trophyY) {
         incrementScore();
         spawnTrophy();
         addToSnake(lastSnakePos);
     }
+}
+
+function start() {
+    clear();
+    for (let i = 0; i < 3; i++) {
+        const snakePart = document.createElement("div");
+        snakePart.id = "snake" + i;
+        snakePart.className = "snake";
+        snakePart.style.visibility = "visible";
+        mainElement.appendChild(snakePart);
+    }
+    document.getElementById("score").innerHTML = "Score: 0";
+    spawnTrophy();
+    snake = [{x: "300", y: "300"}, {x: "280", y: "300"}, {x: "260", y: "300"} ]
+    this.score = 0;
+
+    currentDirection = "";
+    preMove = "";
+    lastMove = "arrowright";
+
+    goingUp = false;
+    goingRight = false;
+    goingDown = false;
+    goingLeft = false;
+
+    go();
 }
 
 function go() {
@@ -182,6 +212,37 @@ function incrementScore() {
     this.score++;
     const scoreElement = document.getElementById("score");
     scoreElement.innerHTML = "Score:  " + this.score;
+}
+
+function checkSnakeCrash() {
+    if (snake[0].x < 0 || snake[0].x > 600 || snake[0].y < 0 || snake[0].y > 600) {
+        return true;
+        console.log("out of bounds");
+    }
+
+    for (let i = 1; i < snake.length; i++) {
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+            return true;
+            console.log("snake overlap");
+        }
+    }
+    return false;
+}
+
+function gameOver() {
+    clear();
+    const endMessage = document.createElement("label");
+    endMessage.className = "endMessage";
+    endMessage.innerHTML = "Game Over - Score: " + this.score;
+    this.mainElement.appendChild(endMessage);
+    // if (score > highScore) {
+    //    document.getElementById("highscore").innerHTML = "High Score: " + score;
+}
+
+function clear() {
+    while (mainElement.firstChild) {
+        mainElement.removeChild(mainElement.firstChild);
+    }
 }
 
 document.addEventListener("keydown", event => {

@@ -31,3 +31,14 @@ h1 {
     background-image: url("assets/trophy.jpeg");
     background-size: cover;
 }
+
+label {
+    padding: 10px;
+    color: rgb(255, 70, 70);
+    font-weight: bold;
+}
+
+.endMessage {
+    text-align: center;
+    font-size: 30px;
+}
