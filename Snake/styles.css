@@ -20,4 +20,14 @@ h1 {
     height: 20px;
     position: absolute;
     background-color: red;
+    visibility: hidden;
+}
+
+.trophy {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-color: gold;
+    background-image: url("assets/trophy.jpeg");
+    background-size: cover;
 }

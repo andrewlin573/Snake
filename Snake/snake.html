@@ -8,6 +8,9 @@
 </head>
 <body onload="drawSnake()">
 <h1>Snake</h1>
+<div>
+    <label id="score">Score: 0</label>
+</div>
 <div id="main" class="main">
     <div id="snake0" class="snake"></div>
     <div id="snake1" class="snake"></div>
@@ -29,6 +32,17 @@ var goingRight = false;
 var goingDown = false;
 var goingLeft = false;
 
+var trophyX;
+var trophyY;
+var score = 0;
+var mainElement = document.getElementById("main");
+
+document.getElementById("snake0").style.visibility = "visible";
+document.getElementById("snake1").style.visibility = "visible";
+document.getElementById("snake2").style.visibility = "visible";
+
+spawnTrophy();
+
 function drawSnake() {
     for (i = 0; i < snake.length; i++) {
         const snakePart = document.getElementById("snake" + i);
@@ -42,6 +56,7 @@ function moveSnake() {
         return;
     }
 
+    const lastSnakePos = {x: snake[snake.length - 1].x, y: snake[snake.length - 1].y};
     for (j = snake.length - 1; j > 0; j--) {
         snake[j].x = snake[j - 1].x;
         snake[j].y = snake[j - 1].y;
@@ -61,6 +76,12 @@ function moveSnake() {
 
     if (goingLeft) {
         snake[0].x = (parseInt(snake[0].x) - 20).toString();
+    }
+
+    if (parseInt(snake[0].x) == this.trophyX && parseInt(snake[0].y) == this.trophyY) {
+        incrementScore();
+        spawnTrophy();
+        addToSnake(lastSnakePos);
     }
 }
 
@@ -127,6 +148,40 @@ function checkMove(key) {
     }
     currentDirection = key;
     changeDirection();
+}
+
+function addToSnake(lastSnakePos) {
+    snake.push({x: lastSnakePos.x, y: lastSnakePos.y})
+    const newSnake = document.createElement("div");
+    newSnake.id = "snake" + (score + 2);
+    newSnake.className = "snake";
+    this.mainElement.appendChild(newSnake);
+    newSnake.style.visibility = "visible";
+}
+
+function spawnTrophy() {
+    const trophyElement = document.getElementById("trophy");
+    if (trophyElement != null) {
+        mainElement.removeChild(trophyElement);
+    }
+    // const width = parseInt(mainElement.style.width) / 20;
+    // const height = parseInt(mainElement.style.height) / 20;
+    const width = 30;
+    const height = 30;
+    this.trophyX = Math.floor(Math.random() * width) * 20;
+    this.trophyY = Math.floor(Math.random() * height) * 20;
+    const newElement = document.createElement("div");
+    newElement.id = "trophy";
+    newElement.className = "trophy";
+    newElement.style.top = trophyY + "px";
+    newElement.style.left = trophyX + "px";
+    this.mainElement.appendChild(newElement);
+}
+
+function incrementScore() {
+    this.score++;
+    const scoreElement = document.getElementById("score");
+    scoreElement.innerHTML = "Score:  " + this.score;
 }
 
 document.addEventListener("keydown", event => {
