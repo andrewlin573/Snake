@@ -6,29 +6,154 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href = "styles.css">
 </head>
-<body>
+<body onload="drawSnake()">
 <h1>Snake</h1>
 <div id="main" class="main">
-    <div id="snake" class="snake"></div>
+    <div id="snake0" class="snake"></div>
+    <div id="snake1" class="snake"></div>
+    <div id="snake2" class="snake"></div>
 </div>
-<button onclick="move()">Start</button>
+<button onclick="go()">Start!</button>
+<button onclick="pause()">Pause!</button>
 <script>
 
-    let snake = [{x: "300px", y: "300px"} ]
+let snake = [{x: "300", y: "300"}, {x: "280", y: "300"}, {x: "260", y: "300"} ]
+var isPaused = false;
 
+var currentDirection = "";
+var preMove = "";
+var lastMove = "arrowright";
 
-    var newMove = false;
-    var gridElement = document.getElementById("snake");
-    gridElement.style.top = "300px";
-    gridElement.style.left = "300px";
+var goingUp = false;
+var goingRight = false;
+var goingDown = false;
+var goingLeft = false;
+
+function drawSnake() {
+    for (i = 0; i < snake.length; i++) {
+        const snakePart = document.getElementById("snake" + i);
+        snakePart.style.left = snake[i].x + "px";
+        snakePart.style.top = snake[i].y + "px";
+    }
+}
+
+function moveSnake() {
+    if (!goingUp && !goingRight && !goingDown && !goingLeft) {
+        return;
+    }
+
+    for (j = snake.length - 1; j > 0; j--) {
+        snake[j].x = snake[j - 1].x;
+        snake[j].y = snake[j - 1].y;
+    }
+    
+    if (goingUp) {
+        snake[0].y = (parseInt(snake[0].y) - 20).toString();
+    }
+
+    if (goingRight) {
+        snake[0].x = (parseInt(snake[0].x) + 20).toString();
+    }
+
+    if (goingDown) {
+        snake[0].y = (parseInt(snake[0].y) + 20).toString();
+    }
+
+    if (goingLeft) {
+        snake[0].x = (parseInt(snake[0].x) - 20).toString();
+    }
+}
+
+function go() {
+    if (isPaused) {
+        setTimeout("go()", 200);
+        return;
+    }
+    drawSnake();
+    moveSnake();
+    setTimeout("go()", 200);
+}
+
+function pause() {
+    if (!isPaused) {
+        isPaused = true;
+    }
+    else {
+        isPaused = false;
+    }
+}
+
+function changeDirection(key) {
+    if (isPaused) {
+        return;
+    }
+
+    if (key === "arrowup" && !goingDown) {
+        goingUp = true;
+        goingRight = false;
+        goingLeft = false;
+        goingDown = false;
+    }
+
+    if (key === "arrowright" && !goingLeft) {
+        goingUp = false;
+        goingRight = true;
+        goingDown = false;
+        goingLeft = false;
+    }
+
+    if (key === "arrowdown" && !goingUp) {
+        goingUp = false;
+        goingRight = false;
+        goingDown = true;
+        goingLeft = false;
+    }
+    
+    if (key === "arrowleft" && !goingRight) {
+        goingUp = false;
+        goingRight = false;
+        goingDown = false;
+        goingLeft = true;
+    }
+}
+
+function checkMove(key) {
+    if (isPaused) {
+        return;
+    }
+
+    if (currentDirection !== lastMove) {
+        preMove = key;
+    }
+    currentDirection = key;
+    changeDirection();
+}
+
+document.addEventListener("keydown", event => {
+    var keyPressed = event.key.toLowerCase();
+    changeDirection(keyPressed);
+})
+
+    /*
+    //var newMove = false;
+    //var gridElement = document.getElementById("snake");
+    //gridElement.style.top = "300px";
+    //gridElement.style.left = "300px";
 
     // Key listener for keypad
     document.addEventListener('keydown', event => {
         var key = event.key.toLowerCase();
         move(key);
     });
-    
 
+    function moveSnake() {
+        var snakeHead = document.getElementById("snake");
+        snakeHead.style.left = "20px";
+        setTimeout(moveSnake(), 1000);
+    }
+    */
+    
+/*
     // main motion function
     // right and bottom works by subtracting from left and top (respectively)
     function move(direction) {
@@ -78,6 +203,7 @@
         }
 
     }
+    */
 </script>
 </body>
 </html>
