@@ -8,16 +8,26 @@
 </head>
 <body onload="drawSnake()">
 <h1>Snake</h1>
-<div>
+<div id="sidebar" class="sidebar">
     <label id="score">Score: 0</label>
+    <label id="highscore">Highscore: 0</label>
+    <button onclick="start()">Start!</button>
+    <button onclick="pause()">Pause!</button>
+    <div>
+        <label id="themes">Themes</label>
+        <button onclick="changeTheme('knicks')">Knicks</button>
+        <button onclick="changeTheme('lakers')">Lake Show</button>
+        <button onclick="changeTheme('heat')">Heat</button>
+        <button onclick="changeTheme('warriors')">Steph Curry</button>
+        <button onclick="changeTheme('celtics')">Tatum</button>
+    </div>
 </div>
 <div id="main" class="main">
     <div id="snake0" class="snake"></div>
     <div id="snake1" class="snake"></div>
     <div id="snake2" class="snake"></div>
 </div>
-<button onclick="start()">Start!</button>
-<button onclick="pause()">Pause!</button>
+
 <script>
 
 let snake = [{x: "300", y: "300"}, {x: "280", y: "300"}, {x: "260", y: "300"} ]
@@ -35,19 +45,21 @@ var goingLeft = false;
 var trophyX;
 var trophyY;
 var score = 0;
+var highscore = 0;
 var mainElement = document.getElementById("main");
+
+var moving = false;
 
 document.getElementById("snake0").style.visibility = "visible";
 document.getElementById("snake1").style.visibility = "visible";
 document.getElementById("snake2").style.visibility = "visible";
-
-//spawnTrophy();
 
 function drawSnake() {
     for (i = 0; i < snake.length; i++) {
         const snakePart = document.getElementById("snake" + i);
         snakePart.style.left = snake[i].x + "px";
         snakePart.style.top = snake[i].y + "px";
+        snakePart.style.visibility = "visible";
     }
 }
 
@@ -117,21 +129,16 @@ function start() {
 
 function go() {
     if (isPaused) {
-        setTimeout("go()", 200);
+        setTimeout("go()", 100);
         return;
     }
     drawSnake();
     moveSnake();
-    setTimeout("go()", 200);
+    setTimeout("go()", 100);
 }
 
 function pause() {
-    if (!isPaused) {
-        isPaused = true;
-    }
-    else {
-        isPaused = false;
-    }
+    isPaused = !isPaused;
 }
 
 function changeDirection(key) {
@@ -186,7 +193,7 @@ function addToSnake(lastSnakePos) {
     newSnake.id = "snake" + (score + 2);
     newSnake.className = "snake";
     this.mainElement.appendChild(newSnake);
-    newSnake.style.visibility = "visible";
+    // newSnake.style.visibility = "visible";
 }
 
 function spawnTrophy() {
@@ -198,8 +205,18 @@ function spawnTrophy() {
     // const height = parseInt(mainElement.style.height) / 20;
     const width = 30;
     const height = 30;
-    this.trophyX = Math.floor(Math.random() * width) * 20;
-    this.trophyY = Math.floor(Math.random() * height) * 20;
+    var validPos = true;
+    while (validPos) {
+        this.trophyX = Math.floor(Math.random() * width) * 20;
+        this.trophyY = Math.floor(Math.random() * height) * 20;
+        validPos = false;
+        for (let i = 0; i < snake.length; i++) {
+            if (snake[i].x == trophyX && snake[i].y == trophyY) {
+                validPos = true;
+            }
+        }
+    }
+
     const newElement = document.createElement("div");
     newElement.id = "trophy";
     newElement.className = "trophy";
@@ -235,8 +252,9 @@ function gameOver() {
     endMessage.className = "endMessage";
     endMessage.innerHTML = "Game Over - Score: " + this.score;
     this.mainElement.appendChild(endMessage);
-    // if (score > highScore) {
-    //    document.getElementById("highscore").innerHTML = "High Score: " + score;
+    if (this.score > this.highscore) {
+        document.getElementById("highscore").innerHTML = "Highscore: " + score;
+    }
 }
 
 function clear() {
@@ -245,81 +263,46 @@ function clear() {
     }
 }
 
+function changeTheme(team) {
+    var r = document.querySelector(":root");
+    switch (team) {
+        case "knicks":
+            r.style.setProperty("--color1", "rgb(0,107,182)");
+            r.style.setProperty("--color2", "rgb(245,132,38)");
+            break;
+        case "lakers":
+            r.style.setProperty("--color1", "rgb(85,37,130)");
+            r.style.setProperty("--color2", "rgb(253,185,39)");
+            break;
+        case "heat":
+            r.style.setProperty("--color1", "rgb(152,0,46)");
+            r.style.setProperty("--color2", "rgb(249,160,27)");
+            break;
+        case "warriors":
+            r.style.setProperty("--color1", "rgb(29,66,138)");
+            r.style.setProperty("--color2", "rgb(255,199,44)");
+            break;
+        case "celtics":
+            r.style.setProperty("--color1", "rgb(0,122,51)");
+            r.style.setProperty("--color2", "rgb(224, 206, 104)");
+            break;
+        default:
+            break;
+    }    
+}
+
 document.addEventListener("keydown", event => {
     var keyPressed = event.key.toLowerCase();
     changeDirection(keyPressed);
 })
 
-    /*
-    //var newMove = false;
-    //var gridElement = document.getElementById("snake");
-    //gridElement.style.top = "300px";
-    //gridElement.style.left = "300px";
-
-    // Key listener for keypad
-    document.addEventListener('keydown', event => {
-        var key = event.key.toLowerCase();
-        move(key);
-    });
-
-    function moveSnake() {
-        var snakeHead = document.getElementById("snake");
-        snakeHead.style.left = "20px";
-        setTimeout(moveSnake(), 1000);
+document.addEventListener("keypress", event => {
+    if (event.code === "KeyP") {
+        pause();
     }
-    */
-    
-/*
-    // main motion function
-    // right and bottom works by subtracting from left and top (respectively)
-    function move(direction) {
-        newMove = true;
-        newMove = false;
-        var elem = document.getElementById("snake");   
-        var startPos = 0;
-        var pos = 0;
-        var stringPos;
+}) 
 
-        // access the position value and convert it to an integer
-        if (direction === "arrowup" || direction === "arrowdown") {
-            stringPos = elem.style.top;
-            console.log(stringPos);
-        } else if (direction === "arrowleft" || direction === "arrowright") {
-            stringPos = elem.style.left;
-            console.log(stringPos);
-        }
-        startPos = parseInt(stringPos.substring(0, stringPos.indexOf("px")));
-        // console.log(startPos);
-        var id = setInterval(frame, 10);
 
-        function frame() {
-            // Check if reached border
-            if (((direction === "arrowup" || direction === "arrowdown") && pos + startPos == 400)
-                || ((direction === "arrowleft" || direction === "arrowright") && pos + startPos == 500)) {
-                clearInterval(id);
-            } else {
-                pos++; 
-                switch (direction) {
-                    case "arrowup":
-                        elem.style.top = startPos - pos + 'px';
-                        break;
-                    case "arrowleft":
-                        elem.style.left = startPos - pos + 'px'; 
-                        break;
-                    case "arrowright":
-                        elem.style.left = startPos + pos + 'px'; 
-                        break;
-                    case "arrowdown":
-                        elem.style.top = startPos + pos + 'px'; 
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-    }
-    */
 </script>
 </body>
 </html>
