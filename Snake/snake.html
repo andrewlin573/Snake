@@ -121,7 +121,6 @@ function moveSnake() {
     }
 
     const lastSnakePos = {x: snake[snake.length - 1].x, y: snake[snake.length - 1].y};
-
     for (j = snake.length - 1; j > 0; j--) {
         snake[j].x = snake[j - 1].x;
         snake[j].y = snake[j - 1].y;
